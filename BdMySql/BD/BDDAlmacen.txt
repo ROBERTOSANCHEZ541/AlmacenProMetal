@@ -1,0 +1,109 @@
+CREATE DATABASE Almacen;
+USE Almacen;
+CREATE TABLE Cliente (
+    IdCliente INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre NVARCHAR(50),
+    Email NVARCHAR(255),
+    Telefono VARCHAR(10)
+);
+
+CREATE TABLE Categoria (
+    id_Categoria INT AUTO_INCREMENT PRIMARY KEY,
+    Tipo_Categoria NVARCHAR(15)
+);
+
+CREATE TABLE Sucursales (
+    IDSucursal INT AUTO_INCREMENT PRIMARY KEY,
+    NombreSucursal NVARCHAR(100),
+    Direccion NVARCHAR(255),
+    Ciudad NVARCHAR(50),
+    CodigoPostal VARCHAR(10),
+    Telefono VARCHAR(15)
+);
+
+CREATE TABLE Productos (
+    IdArticulo INT AUTO_INCREMENT PRIMARY KEY,
+    NombreProducto NVARCHAR(255),
+    Precio DECIMAL(10, 2),
+    Stock INT,
+    Descripcion TEXT,
+    ID_Categoria INT,
+    IDSucursal INT,
+    FOREIGN KEY (ID_Categoria) REFERENCES Categoria(id_Categoria),
+    FOREIGN KEY (IDSucursal) REFERENCES Sucursales(IDSucursal)
+);
+
+-- Tabla Pedidos
+CREATE TABLE Pedidos (
+    PedidoID INT AUTO_INCREMENT PRIMARY KEY,
+     FechaPedido VARCHAR(10) NOT NULL,
+    ClienteID INT,
+    FOREIGN KEY (ClienteID) REFERENCES Cliente(IdCliente)
+);
+
+-- Tabla Transporte
+CREATE TABLE Transporte (
+    IDTransporte INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre NVARCHAR(100),
+    Tipo NVARCHAR(50),
+    CapacidadKg INT,
+    NumeroPlaca NVARCHAR(20)
+);
+
+-- Tabla DetallesPedido
+CREATE TABLE DetallesPedido (
+    DetalleID INT AUTO_INCREMENT PRIMARY KEY,
+    PedidoID INT,
+    ProductoID INT,
+    IDTransporte INT,
+    Cantidad INT,
+    PrecioUnitario DECIMAL(10, 2),
+    FOREIGN KEY (PedidoID) REFERENCES Pedidos(PedidoID),
+    FOREIGN KEY (IDTransporte) REFERENCES Transporte(IDTransporte),
+    FOREIGN KEY (ProductoID) REFERENCES Productos(IdArticulo)
+);
+
+-- Tabla Proveedor
+CREATE TABLE Proveedor (
+    IdProveedor INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre NVARCHAR(50),
+    Telefono VARCHAR(10),
+    Direccion NVARCHAR(100),
+    RFC CHAR(13)
+);
+
+-- Tabla Empleado
+CREATE TABLE Empleado (
+    IdEmpleado INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre NVARCHAR(50),
+    Edad INT,
+    RFC  VARCHAR(20) UNIQUE,
+    Telefono VARCHAR(10),
+    CURP VARCHAR(18),
+    NSS CHAR(11),
+    Puesto NVARCHAR(100),
+    IDSucursal INT,
+    FOREIGN KEY (IDSucursal) REFERENCES Sucursales(IDSucursal)
+);
+
+-- Tabla Compras
+CREATE TABLE Compras (
+    CompraID INT AUTO_INCREMENT PRIMARY KEY,
+    FechaCompra VARCHAR(10),
+    ProveedorID INT,
+    EmpleadoID INT,
+    FOREIGN KEY (ProveedorID) REFERENCES Proveedor(IdProveedor)
+);
+
+-- Tabla DetallesCompra
+CREATE TABLE DetallesCompra (
+    DetalleCompraID INT AUTO_INCREMENT PRIMARY KEY,
+    CompraID INT,
+    ProductoID INT,
+    IDTransporte INT,
+    Cantidad INT,
+    PrecioUnitario DECIMAL(10, 2),
+    FOREIGN KEY (IDTransporte) REFERENCES Transporte(IDTransporte),
+    FOREIGN KEY (CompraID) REFERENCES Compras(CompraID),
+    FOREIGN KEY (ProductoID) REFERENCES Productos(IdArticulo)
+);
